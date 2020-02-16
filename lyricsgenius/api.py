@@ -119,6 +119,24 @@ class API(object):
         endpoint = "search/"
         params = {'q': search_term}
         return self._make_request(endpoint, params_=params)
+    
+    def search_genius_all(self, search_term):
+        """Search for all documents hosted on Genius"""
+        endpoint = "search/"
+        i = 1
+        cont = True
+        params = {'q': search_term, 'per_page': 50, 'page': i}
+        result = self._make_request(endpoint, params_=params)
+        i = i + 1
+        while cont:
+            params = {'q': search_term, 'per_page': 50, 'page': i}
+            temp = self._make_request(endpoint, params_=params)
+            if len(temp['hits']) == 0:
+                cont = False
+            else:
+                i = i + 1
+                result['hits'] = result['hits'] + temp['hits']
+        return result
 
     def search_genius_web(self, search_term, per_page=5):
         """Use the web-version of Genius search"""
